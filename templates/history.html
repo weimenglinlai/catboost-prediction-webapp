@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>历史记录 | 幸福指数预测</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <!-- 页头 -->
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo-text">幸福指数.AI</div>
+            <nav class="nav-links">
+                <a href="/">开始预测</a>
+                <a href="/batch_predict">批量预测</a>
+                <a href="/cities">我的理想城</a>
+                <a href="/logout">退出登录</a>
+                <span
+                    style="font-size: 0.8rem; margin-left: 20px; border: 1px solid #ccc; padding: 5px 10px; border-radius: 20px;">
+                    {{ current_user.username }}
+                </span>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-container" style="max-width: 1000px; padding-top: 100px;">
+
+        <div style="text-align: center; margin-bottom: 60px;" data-aos="fade-up">
+            <span class="en-title">你的幸福之旅</span>
+            <h1 class="hero-title"
+                style="font-size: 3rem; background: none; -webkit-text-fill-color: initial; color: var(--text-main);">
+                预测历史</h1>
+            <p style="color: var(--text-secondary);">记录每一次对幸福的探索与发现</p>
+        </div>
+
+        {% if history %}
+        <div class="timeline" style="position: relative; padding-left: 40px; border-left: 2px solid #ddd;">
+            {% for record in history %}
+            <div class="timeline-item" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}"
+                style="margin-bottom: 50px; position: relative;">
+                <!-- 时间点 -->
+                <div
+                    style="position: absolute; left: -49px; top: 0; width: 16px; height: 16px; background: var(--primary-color); border-radius: 50%; border: 4px solid #fff; box-shadow: 0 0 0 2px #ddd;">
+                </div>
+
+                <div class="glass-card"
+                    style="padding: 30px; display: flex; align-items: center; justify-content: space-between;">
+                    <div style="flex: 1;">
+                        <span style="font-size: 0.8rem; color: #999; text-transform: uppercase; letter-spacing: 1px;">{{
+                            record.created_at }}</span>
+                        <h3 style="margin: 10px 0; font-size: 1.5rem;">
+                            幸福指数第 {{ record.level }} 级
+                        </h3>
+                        <div style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 10px;">
+                            <span style="margin-right: 20px;">👤 {{ record.input.age }} 岁</span>
+                            <span style="margin-right: 20px;">💰 {{ record.input.income }} 元</span>
+                            <span>📍 {{ record.input.province if record.input.province else '未指定' }} 省</span>
+                        </div>
+
+                        <!-- 概率分布 -->
+                        {% if record.prob %}
+                        <div style="background: #f8f9fa; padding: 10px 15px; border-radius: 8px; margin-top: 10px;">
+                            <div style="font-size: 0.8rem; color: #666; margin-bottom: 5px;">概率分布:</div>
+                            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                                <span style="font-size: 0.75rem; background: #e3f2fd; color: #1565c0; padding: 2px 8px; border-radius: 10px;">
+                                    1级: {{ record.prob['1'] }}
+                                </span>
+                                <span style="font-size: 0.75rem; background: #e8f5e9; color: #2e7d32; padding: 2px 8px; border-radius: 10px;">
+                                    2级: {{ record.prob['2'] }}
+                                </span>
+                                <span style="font-size: 0.75rem; background: #fffde7; color: #f9a825; padding: 2px 8px; border-radius: 10px;">
+                                    3级: {{ record.prob['3'] }}
+                                </span>
+                                <span style="font-size: 0.75rem; background: #fff3e0; color: #ef6c00; padding: 2px 8px; border-radius: 10px;">
+                                    4级: {{ record.prob['4'] }}
+                                </span>
+                                <span style="font-size: 0.75rem; background: #ffebee; color: #c62828; padding: 2px 8px; border-radius: 10px;">
+                                    5级: {{ record.prob['5'] }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div style="text-align: right; margin-left: 30px; min-width: 80px;">
+                        <span class="result-emoji" style="font-size: 2.5rem;">
+                            {% if record.level == 5 %}😍
+                            {% elif record.level == 4 %}🙂
+                            {% elif record.level == 3 %}😐
+                            {% elif record.level == 2 %}😟
+                            {% elif record.level == 1 %}😭
+                            {% else %}❓{% endif %}
+                        </span>
+                        <div style="margin-top: 10px; font-size: 0.9rem; color: #666;">
+                            {% if record.level == 5 %}非常幸福
+                            {% elif record.level == 4 %}幸福
+                            {% elif record.level == 3 %}一般
+                            {% elif record.level == 2 %}不幸福
+                            {% elif record.level == 1 %}非常不幸福
+                            {% else %}未知{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- 统计信息 -->
+        <div class="glass-card" style="padding: 25px; margin-top: 40px;" data-aos="fade-up">
+            <div style="text-align: center;">
+                <h3 style="margin-bottom: 20px;">📊 历史统计</h3>
+                <div style="display: flex; justify-content: space-around; flex-wrap: wrap;">
+                    <div style="text-align: center; padding: 15px;">
+                        <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-color);">{{ history|length }}</div>
+                        <div style="color: var(--text-secondary); font-size: 0.9rem;">总预测次数</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px;">
+                        {% set avg_level = history|map(attribute='level')|sum / history|length %}
+                        <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-color);">{{ "%.1f"|format(avg_level) }}</div>
+                        <div style="color: var(--text-secondary); font-size: 0.9rem;">平均幸福等级</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px;">
+                        {% set recent_date = history|first %}
+                        <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-color);">{{ recent_date.created_at.split(' ')[0] }}</div>
+                        <div style="color: var(--text-secondary); font-size: 0.9rem;">最近预测时间</div>
+                    </div>
+                    <div style="text-align: center; padding: 15px;">
+                        {% set high_happy = history|selectattr('level', '>=', 4)|list|length %}
+                        <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary-color);">{{ "%.0f"|format(high_happy/history|length*100) }}%</div>
+                        <div style="color: var(--text-secondary); font-size: 0.9rem;">高幸福感占比</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% else %}
+        <div class="glass-card" style="padding: 60px; text-align: center;" data-aos="zoom-in">
+            <span style="font-size: 4rem; opacity: 0.2;">📭</span>
+            <h3 style="margin: 20px 0;">暂无历史记录</h3>
+            <p style="color: #999; margin-bottom: 30px;">开始你的首次预测，记录将在此显示。</p>
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <a href="/" class="btn-primary" style="text-decoration: none; display: inline-block;">开始预测</a>
+                <a href="/batch_predict" class="btn-secondary" style="text-decoration: none; display: inline-block; background: #fff; color: var(--text-main); border: 1px solid #ddd; padding: 12px 25px; border-radius: 50px;">批量预测</a>
+                <a href="/cities" class="btn-secondary" style="text-decoration: none; display: inline-block; background: #fff; color: var(--text-main); border: 1px solid #ddd; padding: 12px 25px; border-radius: 50px;">我的理想城</a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init();
+
+        // 添加一些交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const timelineItems = document.querySelectorAll('.timeline-item');
+
+            timelineItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.transform = 'translateX(10px)';
+                });
+
+                item.addEventListener('mouseleave', function() {
+                    this.style.transform = 'translateX(0)';
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

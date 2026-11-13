@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的理想城 | 幸福指数.AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .cities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .city-card {
+            position: relative;
+            height: 100%;
+            transition: transform 0.3s;
+        }
+
+        .city-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .city-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .city-actions {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .happiness-meter {
+            height: 8px;
+            background: linear-gradient(to right,
+                #ff5252 0%,
+                #ff9800 25%,
+                #ffeb3b 50%,
+                #4caf50 75%,
+                #2196f3 100%);
+            border-radius: 4px;
+            margin: 10px 0;
+            position: relative;
+        }
+
+        .happiness-indicator {
+            position: absolute;
+            top: -4px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            border: 2px solid var(--primary-color);
+            border-radius: 50%;
+            transform: translateX(-50%);
+        }
+
+        .policy-badge {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo-text">幸福指数.AI</div>
+            <nav class="nav-links">
+                <a href="/">开始预测</a>
+                <a href="/history">历史记录</a>
+                <a href="/batch_predict">批量预测</a>
+                <a href="/cities" style="color: var(--primary-color);">我的理想城</a>
+                <a href="/logout">退出登录</a>
+                <span style="font-size: 0.8rem; margin-left: 20px; border: 1px solid #ccc; padding: 5px 10px; border-radius: 20px;">
+                    {{ current_user.username }}
+                </span>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-container" style="max-width: 1200px; padding-top: 100px;">
+        <div style="text-align: center; margin-bottom: 60px;" data-aos="fade-up">
+            <span class="en-title">城市模拟</span>
+            <h1 class="hero-title" style="font-size: 3rem; background: none; -webkit-text-fill-color: initial; color: var(--text-main);">
+                我的理想城
+            </h1>
+            <p style="color: var(--text-secondary); max-width: 800px; margin: 0 auto;">
+                创建虚拟城市，调整人口参数，实施政策干预，观察居民幸福感的变化
+            </p>
+            <a href="/city/new" class="btn-primary" style="margin-top: 30px; text-decoration: none; display: inline-block;">
+                🏙️ 创建新城市
+            </a>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="glass-card" style="background: #e3f2fd; color: #1976d2; padding: 15px 20px; border-radius: 10px; margin-bottom: 20px;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% if cities %}
+        <div class="cities-grid">
+            {% for city in cities %}
+            <div class="city-card" data-aos="fade-up" data-aos-delay="{{ loop.index * 100 }}">
+                <div class="glass-card" style="padding: 25px; height: 100%;">
+                    <div class="city-actions">
+                        <button class="action-btn" onclick="editCity({{ city.id }})" title="编辑">✏️</button>
+                        <button class="action-btn" onclick="deleteCity({{ city.id }})" title="删除">🗑️</button>
+                    </div>
+
+                    <h3 style="margin-bottom: 10px; font-size: 1.5rem;">{{ city.name }}</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 20px; min-height: 40px;">
+                        {{ city.description or "暂无描述" }}
+                    </p>
+
+                    <!-- 幸福指数 -->
+                    <div style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="font-size: 0.9rem; color: var(--text-secondary);">居民平均幸福指数</span>
+                            <span style="font-weight: 700; font-size: 1.2rem; color: var(--primary-color);">
+                                {{ "%.1f"|format(city.avg_happiness) }}
+                            </span>
+                        </div>
+                        <div class="happiness-meter">
+                            <div class="happiness-indicator" style="left: {{ city.avg_happiness }}%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- 关键参数 -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;">
+                        <div>
+                            <span style="font-size: 0.8rem; color: #999;">平均收入</span>
+                            <div style="font-weight: 600;">¥{{ "%.0f"|format(city.avg_income) }}</div>
+                        </div>
+                        <div>
+                            <span style="font-size: 0.8rem; color: #999;">房产拥有率</span>
+                            <div style="font-weight: 600;">{{ "%.1f"|format(city.avg_house) }}</div>
+                        </div>
+                        <div>
+                            <span style="font-size: 0.8rem; color: #999;">公平感</span>
+                            <div style="font-weight: 600;">{{ "%.1f"|format(city.avg_equity) }}/5</div>
+                        </div>
+                        <div>
+                            <span style="font-size: 0.8rem; color: #999;">居民年龄</span>
+                            <div style="font-weight: 600;">{{ "%.1f"|format(city.avg_age) }}岁</div>
+                        </div>
+                    </div>
+
+                    <!-- 政策数量 -->
+                    {% if city.policies %}
+                    <div style="margin-top: 20px;">
+                        <span style="font-size: 0.8rem; color: #999;">已实施政策</span>
+                        <div style="margin-top: 5px;">
+                            {% for policy in city.policies[:3] %}
+                            <span class="policy-badge">{{ policy.name[:10] }}{% if policy.name|length > 10 %}...{% endif %}</span>
+                            {% endfor %}
+                            {% if city.policies|length > 3 %}
+                            <span class="policy-badge">+{{ city.policies|length - 3 }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- 更新时间 -->
+                    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #eee;">
+                        <span style="font-size: 0.75rem; color: #999;">
+                            更新于 {{ city.updated_at.strftime('%Y-%m-%d %H:%M') }}
+                        </span>
+                    </div>
+
+                    <a href="/city/{{ city.id }}" class="btn-primary" style="margin-top: 20px; width: 100%; text-align: center; text-decoration: none; display: block;">
+                        进入城市
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% else %}
+        <div class="glass-card empty-state" data-aos="zoom-in">
+            <span style="font-size: 5rem; opacity: 0.2;">🏙️</span>
+            <h3 style="margin: 20px 0;">还没有创建城市</h3>
+            <p style="color: #999; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                创建一个虚拟城市，模拟不同人口参数和政策对居民幸福感的影响。<br>
+                通过调整经济、社会和心理参数，探索建设"理想城市"的最佳路径。
+            </p>
+            <a href="/city/new" class="btn-primary" style="text-decoration: none; display: inline-block;">
+                🏙️ 创建第一个城市
+            </a>
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init();
+
+        function editCity(cityId) {
+            window.location.href = `/city/${cityId}/edit`;
+        }
+
+        function deleteCity(cityId) {
+            if (confirm('确定要删除这个城市吗？此操作不可撤销。')) {
+                fetch(`/city/${cityId}/delete`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.reload();
+                    } else {
+                        alert('删除失败: ' + (data.error || '未知错误'));
+                    }
+                })
+                .catch(error => {
+                    alert('删除失败: ' + error);
+                });
+            }
+        }
+    </script>
+</body>
+</html>

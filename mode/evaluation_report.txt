@@ -1,0 +1,47 @@
+============================================================
+CatBoost 幸福感预测模型评估报告
+============================================================
+
+准确率: 0.4956 (49.56%)
+
+分类报告:
+              precision    recall  f1-score   support
+
+           1       0.19      0.24      0.21        21
+           2       0.22      0.55      0.32        99
+           3       0.31      0.40      0.35       232
+           4       0.77      0.49      0.60       964
+           5       0.40      0.58      0.47       282
+
+    accuracy                           0.50      1598
+   macro avg       0.38      0.45      0.39      1598
+weighted avg       0.60      0.50      0.52      1598
+
+混淆矩阵:
+[[  5   9   3   1   3]
+ [  7  54  21  12   5]
+ [  7  66  92  46  21]
+ [  6  96 163 477 222]
+ [  2  16  20  80 164]]
+
+Top 20 重要特征:
+  equity: 8.69
+  depression: 6.50
+  city: 5.47
+  county: 5.47
+  province: 5.04
+  family_status: 4.85
+  class: 3.81
+  status_peer: 3.22
+  health: 2.21
+  edu: 2.16
+  inc_ability: 1.61
+  nationality: 1.59
+  status_3_before: 1.45
+  leisure_9: 1.35
+  public_service_mean: 1.24
+  political: 1.23
+  class_10_after: 1.23
+  view: 1.22
+  public_service_7: 1.06
+  leisure_6: 1.04

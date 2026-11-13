@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>注册 | 幸福指数.AI</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body
+    style="height: 100vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at center, #fff 0%, #f0f2f5 100%);">
+
+    <div class="glass-card" style="width: 100%; max-width: 400px; padding: 50px; text-align: center;">
+        <span class="en-title" style="margin-bottom: 20px;">加入我们</span>
+        <h2 style="font-size: 2rem; margin-bottom: 40px; color: var(--text-main);">创建账户</h2>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div
+            style="background: #ffebee; color: #c62828; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9rem;">
+            {{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form action="/register" method="POST">
+            <div style="margin-bottom: 20px; text-align: left;">
+                <label
+                    style="font-size: 0.8rem; color: #999; margin-bottom: 8px; display: block; font-weight: 600; letter-spacing: 1px;">用户名</label>
+                <input type="text" name="username" class="form-control" required style="padding: 15px;">
+            </div>
+            <div style="margin-bottom: 20px; text-align: left;">
+                <label
+                    style="font-size: 0.8rem; color: #999; margin-bottom: 8px; display: block; font-weight: 600; letter-spacing: 1px;">密码</label>
+                <input type="password" name="password" class="form-control" required style="padding: 15px;">
+            </div>
+            <div style="margin-bottom: 30px; text-align: left;">
+                <label
+                    style="font-size: 0.8rem; color: #999; margin-bottom: 8px; display: block; font-weight: 600; letter-spacing: 1px;">确认密码</label>
+                <input type="password" name="confirm_password" class="form-control" required style="padding: 15px;">
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%;">注册</button>
+        </form>
+
+        <div style="margin-top: 30px; font-size: 0.9rem;">
+            <a href="/login" style="color: var(--text-secondary); text-decoration: none;">已有账户？立即登录</a>
+            <span style="margin: 0 10px; color: #ddd;">|</span>
+            <a href="/" style="color: var(--text-secondary); text-decoration: none;">返回首页</a>
+        </div>
+    </div>
+
+</body>
+
+</html>

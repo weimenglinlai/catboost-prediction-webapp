@@ -1,0 +1,317 @@
+:root {
+    /* Design Spec: Low saturation, Black/White/Gray + Premium Purple */
+    --primary-color: #6c5ce7;
+    --primary-dark: #4834d4;
+    --primary-light: #a29bfe;
+
+    --bg-color: #f9f9f9;
+    --text-main: #2d3436;
+    --text-secondary: #636e72;
+    --text-light: #b2bec3;
+
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --shadow-soft: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 20px 60px -15px rgba(108, 92, 231, 0.15);
+}
+
+body {
+    font-family: "SF Pro Display", "Helvetica Neue", "Arial", sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.8;
+    overflow-x: hidden;
+    /* For scroll visuals */
+}
+
+/* Typography & Ritual Copy */
+h1,
+h2,
+h3,
+h4 {
+    font-family: "Playfair Display", serif;
+    /* Ritualistic feeling */
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.en-title {
+    display: block;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+/* Glass & Cards - "Less Is More" */
+.glass-card {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Header - Minimalist */
+.main-header {
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 15px 0;
+}
+
+.header-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-text {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.nav-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    margin-left: 30px;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover {
+    color: var(--primary-color);
+}
+
+/* Hero Section - Parallax & Tension */
+.hero-section {
+    height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 50%, #ffffff 0%, #f1f2f6 100%);
+}
+
+.hero-content {
+    z-index: 2;
+    max-width: 800px;
+    padding: 0 20px;
+}
+
+.hero-title {
+    font-size: 4rem;
+    margin-bottom: 20px;
+    line-height: 1.1;
+    background: linear-gradient(45deg, #2d3436 30%, #6c5ce7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+    font-weight: 300;
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0.5;
+    animation: bounce 2s infinite;
+}
+
+/* Main Layout - Asymmetric Tension */
+.main-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 80px 40px;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    /* Asymmetric */
+    gap: 60px;
+}
+
+/* Form Elements */
+.grid-responsive {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 25px;
+}
+
+.form-group {
+    position: relative;
+}
+
+.form-group label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+/* Style for English part of label */
+.label-en {
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    opacity: 0.7;
+    font-weight: 600;
+}
+
+/* Style for Chinese part of label */
+.label-cn {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.form-control {
+    width: 100%;
+    padding: 14px 18px;
+    border: 1px solid #dfe6e9;
+    border-radius: 12px;
+    background: #fff;
+    font-size: 1rem;
+    transition: all 0.3s;
+    appearance: none;
+    /* For selects */
+}
+
+
+/* Buttons - Premium */
+.btn-primary {
+    background: var(--text-main);
+    /* Black for luxury */
+    color: #fff;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    letter-spacing: 1px;
+}
+
+.btn-primary:hover {
+    background: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(108, 92, 231, 0.2);
+}
+
+/* Result Section - Sticky & Clean */
+.result-column {
+    position: sticky;
+    top: 100px;
+    height: fit-content;
+}
+
+.result-card.glass-card {
+    padding: 40px;
+    text-align: center;
+    border-top: 5px solid var(--primary-color);
+}
+
+.score-huge {
+    font-size: 5rem;
+    font-family: "Playfair Display", serif;
+    color: var(--primary-color);
+    margin: 20px 0;
+    line-height: 1;
+}
+
+.result-emoji {
+    font-size: 3rem;
+    margin-bottom: 10px;
+    display: block;
+}
+
+/* Bars */
+.prob-item {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.prob-label {
+    width: 80px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-align: right;
+    margin-right: 15px;
+}
+
+.prob-bar-bg {
+    flex: 1;
+    height: 4px;
+    background: #f1f2f6;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.prob-bar-fill {
+    height: 100%;
+    background: var(--text-main);
+    width: 0;
+    transition: width 1s ease-out;
+}
+
+.prob-val {
+    width: 50px;
+    text-align: right;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+@keyframes bounce {
+
+    0%,
+    20%,
+    50%,
+    80%,
+    100% {
+        transform: translateY(0) translateX(-50%);
+    }
+
+    40% {
+        transform: translateY(-10px) translateX(-50%);
+    }
+
+    60% {
+        transform: translateY(-5px) translateX(-50%);
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .main-container {
+        grid-template-columns: 1fr;
+        padding: 40px 20px;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+    }
+}

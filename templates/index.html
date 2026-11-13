@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>居民幸福感预测 | 幸福指数.AI</title>
+    <!-- 字体 -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <!-- 页头 -->
+    <header class="main-header">
+        <div class="header-content">
+            <div class="logo-text">幸福指数.AI</div>
+            <nav class="nav-links">
+                {% if current_user.is_authenticated %}
+                <a href="/history">历史记录</a>
+                <a href="/batch_predict">批量预测</a>
+                <a href="/cities">我的理想城</a>
+                <a href="/logout">退出登录</a>
+                <span
+                    style="font-size: 0.8rem; margin-left: 20px; border: 1px solid #ccc; padding: 5px 10px; border-radius: 20px;">
+                    {{ current_user.username }}
+                </span>
+                {% else %}
+                <a href="/login">登录</a>
+                <a href="/register" style="color: var(--text-main); font-weight: 600;">注册</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <!-- 英雄区域（视差滚动） -->
+    <div class="hero-section" id="hero">
+        <div class="hero-content" data-aos="fade-up" data-aos-duration="1200">
+            <span class="en-title">数据智能</span>
+            <h1 class="hero-title">解码你的<br>幸福感</h1>
+            <p class="hero-subtitle">基于 8000+ 真实样本的深度学习算法<br>解析生活中的每一个幸福因子</p>
+            <button onclick="document.getElementById('input-area').scrollIntoView({behavior: 'smooth'})"
+                class="btn-primary">
+                开始预测
+            </button>
+        </div>
+        <div class="scroll-indicator">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 13l5 5 5-5M7 6l5 5 5-5" />
+            </svg>
+        </div>
+    </div>
+
+    <!-- 主要内容容器 -->
+    <div class="main-container" id="input-area">
+
+        <!-- 左侧：表单 -->
+        <div class="form-column">
+
+            {% if not current_user.is_authenticated %}
+            <div class="glass-card" style="padding: 40px; text-align: center; margin-bottom: 40px;" data-aos="fade-up">
+                <h3>需要登录</h3>
+                <p style="margin-bottom: 20px; color: #666;">请先登录以解锁完整预测功能并保存记录</p>
+                <a href="/login" class="btn-primary">立即登录</a>
+            </div>
+            {% endif %}
+
+            <form id="predictionForm"
+                style="opacity: {{ '1' if current_user.is_authenticated else '0.3' }}; pointer-events: {{ 'auto' if current_user.is_authenticated else 'none' }};">
+
+                <!-- 第一部分：基础信息 -->
+                <div class="form-section" data-aos="fade-up">
+                    <div class="section-header">
+                        <span class="en-title">基础画像</span>
+                        <h3>基础画像</h3>
+                    </div>
+                    <div class="glass-card" style="padding: 30px;">
+                        <div class="grid-responsive">
+                            <div class="form-group">
+                                <label>
+                                    <span class="label-en">性别</span>
+                                    <span class="label-cn">性别</span>
+                                </label>
+                                <select name="gender" class="form-control">
+                                    <option value="1">男</option>
+                                    <option value="2">女</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <span class="label-en">年龄</span>
+                                    <span class="label-cn">年龄</span>
+                                </label>
+                                <input type="number" name="age" value="28" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <span class="label-en">学历</span>
+                                    <span class="label-cn">学历</span>
+                                </label>
+                                <select name="edu" class="form-control">
+                                    <option value="14">研究生及以上</option>
+                                    <option value="13">本科</option>
+                                    <option value="12">大专</option>
+                                    <option value="11">高中</option>
+                                    <option value="6">小学</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <span class="label-en">政治面貌</span>
+                                    <span class="label-cn">政治面貌</span>
+                                </label>
+                                <select name="political" class="form-control">
+                                    <option value="4">群众</option>
+                                    <option value="1">党员</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第二部分：经济状况 -->
+                <div class="form-section" data-aos="fade-up">
+                    <div class="section-header">
+                        <span class="en-title">经济状况</span>
+                        <h3>经济状况</h3>
+                    </div>
+                    <div class="glass-card" style="padding: 30px;">
+                        <div class="grid-responsive">
+                            <div class="form-group">
+                                <label>
+                                    <span class="label-en">个人年收入</span>
+                                    <span class="label-cn">个人年收入</span>
+                                </label>
+                                <input type="number" name="income" value="80000" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <span class="label-en">家庭年收入</span>
+                                    <span class="label-cn">家庭年收入</span>
+                                </label>
+                                <input type="number" name="family_income" value="150000" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <span class="label-en">家庭人口</span>
+                                    <span class="label-cn">家庭人口</span>
+                                </label>
+                                <input type="number" name="family_m" value="3" class="form-control" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <span class="label-en">房产数</span>
+                                    <span class="label-cn">房产数</span>
+                                </label>
+                                <input type="number" name="house" value="1" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <span class="label-en">汽车数</span>
+                                    <span class="label-cn">汽车数</span>
+                                </label>
+                                <input type="number" name="car" value="0" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第三部分：社会心理 -->
+                <div class="form-section" data-aos="fade-up">
+                    <div class="section-header">
+                        <span class="en-title">社会心理</span>
+                        <h3>社会心理</h3>
+                    </div>
+                    <div class="glass-card" style="padding: 30px;">
+                        <div class="grid-responsive">
+                            <div class="form-group">
+                                <label>
+                                    <span class="label-en">公平感</span>
+                                    <span class="label-cn">公平感</span>
+                                </label>
+                                <select name="equity" class="form-control">
+                                    <option value="4">4 - 比较公平</option>
+                                    <option value="3">3 - 一般</option>
+                                    <option value="5">5 - 完全公平</option>
+                                    <option value="2">2 - 不公平</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <span class="label-en">抑郁频次</span>
+                                    <span class="label-cn">抑郁频次</span>
+                                </label>
+                                <select name="depression" class="form-control">
+                                    <option value="4">4 - 经常</option>
+                                    <option value="5">5 - 总是</option>
+                                    <option value="3">3 - 有时</option>
+                                    <option value="2">2 - 很少</option>
+                                    <option value="1">1 - 从不</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <span class="label-en">社会阶层</span>
+                                    <span class="label-cn">社会阶层</span>
+                                </label>
+                                <input type="number" name="class" value="5" class="form-control" min="1" max="10">
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    <span class="label-en">同侪地位</span>
+                                    <span class="label-cn">同侪地位</span>
+                                </label>
+                                <select name="status_peer" class="form-control">
+                                    <option value="2">差不多</option>
+                                    <option value="3">较高</option>
+                                    <option value="1">较低</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section" style="text-align: right;" data-aos="fade-up">
+                    <button type="button" class="btn-primary" onclick="predictHappiness()" style="width: 100%;">
+                        计算幸福指数
+                    </button>
+                    <div style="margin-top: 15px; text-align: center;">
+                        <a href="javascript:void(0)" onclick="randomFill()"
+                            style="color: #999; font-size: 0.9rem; text-decoration: none;">随机填充数据</a>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- 右侧：固定结果区域 -->
+        <div class="result-column">
+            <div id="emptyResult" class="result-card glass-card" data-aos="fade-left">
+                <span style="font-size: 3rem; opacity: 0.2;">🤔</span>
+                <h3 style="margin: 20px 0;">等待输入</h3>
+                <p style="color: #999; font-size: 0.9rem;">请登录并填写左侧表单以激活AI模型。</p>
+            </div>
+
+            <div id="predictionResult" class="result-card glass-card"
+                style="display: none; flex-direction: column; align-items: center; text-align: center;">
+                <span class="en-title" style="margin-bottom: 10px;">幸福指数</span>
+
+                <!-- 分数显示 -->
+                <div style="position: relative; margin: 20px 0;">
+                    <div class="score-huge" id="resultScore"
+                        style="font-size: 5rem; font-weight: 700; background: linear-gradient(135deg, #6c5ce7, #a29bfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                        0.0</div>
+                    <span style="font-size: 1rem; color: #999; display: block; margin-top: -10px;">/ 100</span>
+                </div>
+
+                <!-- 二级信息 -->
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 30px;">
+                    <span id="resultEmoji" style="font-size: 2rem;">✨</span>
+                    <span id="resultLevel" style="font-size: 1.2rem; font-weight: 500; color: #2d3436;">未知</span>
+                </div>
+
+                <h3 id="resultMessage" style="color: #636e72; font-size: 1rem; margin-bottom: 40px; font-weight: 400;">
+                    未知</h3>
+
+                <div class="probability-chart" style="width: 100%;">
+                    <div class="prob-item">
+                        <span class="prob-label">5级</span>
+                        <div class="prob-bar-bg">
+                            <div id="prob5" class="prob-bar-fill"></div>
+                        </div>
+                        <span class="prob-val" id="prob5Text">0%</span>
+                    </div>
+                    <div class="prob-item">
+                        <span class="prob-label">4级</span>
+                        <div class="prob-bar-bg">
+                            <div id="prob4" class="prob-bar-fill"></div>
+                        </div>
+                        <span class="prob-val" id="prob4Text">0%</span>
+                    </div>
+                    <div class="prob-item">
+                        <span class="prob-label">3级</span>
+                        <div class="prob-bar-bg">
+                            <div id="prob3" class="prob-bar-fill"></div>
+                        </div>
+                        <span class="prob-val" id="prob3Text">0%</span>
+                    </div>
+                    <div class="prob-item">
+                        <span class="prob-label">2级</span>
+                        <div class="prob-bar-bg">
+                            <div id="prob2" class="prob-bar-fill"></div>
+                        </div>
+                        <span class="prob-val" id="prob2Text">0%</span>
+                    </div>
+                    <div class="prob-item">
+                        <span class="prob-label">1级</span>
+                        <div class="prob-bar-bg">
+                            <div id="prob1" class="prob-bar-fill"></div>
+                        </div>
+                        <span class="prob-val" id="prob1Text">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 脚本 -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="/static/script.js?v={{ range(1, 10000) | random }}"></script>
+    <script>
+        AOS.init();
+
+        // 简单视差效果
+        window.addEventListener('scroll', function () {
+            const scrolled = window.pageYOffset;
+            const hero = document.getElementById('hero');
+            hero.style.backgroundPositionY = -(scrolled * 0.5) + 'px';
+        });
+    </script>
+</body>
+
+</html>
